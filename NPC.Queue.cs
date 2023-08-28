@@ -19,7 +19,7 @@ public partial class NPC
 	{
 		while ( true )
 		{
-			if ( NPCTaskQueue.Count != 0 )
+			if ( NPCTaskQueue != null && NPCTaskQueue.Count != 0 )
 			{
 
 				NPCTask CurrentTask = NPCTaskQueue.Dequeue();
