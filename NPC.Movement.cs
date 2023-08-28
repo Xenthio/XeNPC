@@ -11,56 +11,33 @@ public partial class NPC : AnimatedEntity
 	public float GroundBounce = 0;
 	public float WallBounce = 0;
 	public float MaxStandableAngle = 50;
+	public float StepSize = 18;
+	public float Gravity = 800;
 
 	public void TryMove()
 	{
+		Velocity -= new Vector3( 0, 0, (Gravity * Scale) * 0.5f ) * Time.Delta;
+		StepMove();
+	}
 
-		var bbox = CollisionBounds;
-
+	public virtual void StepMove()
+	{
 		Mover = new MoveHelper( Position, Velocity );
-		Mover.GroundBounce = GroundBounce;
-		Mover.WallBounce = WallBounce;
+		var bbox = CollisionBounds;
+		Mover.Trace = Mover.Trace.Size( bbox ).Ignore( this );
 		Mover.MaxStandableAngle = MaxStandableAngle;
-		Mover.Trace = Mover.Trace.Ignore( this ).Size( bbox );
-		if ( !Velocity.IsNearlyZero( 0.001f ) )
-		{
-			Mover.TryUnstuck();
-			Mover.TryMoveWithStep( Time.Delta, 18 );
-		}
 
-		var tr = Mover.TraceDirection( Vector3.Down * 10.0f );
+		Mover.TryMoveWithStep( Time.Delta, StepSize * Scale );
 
-		if ( Mover.IsFloor( tr ) )
-		{
-			GroundEntity = tr.Entity;
-			if ( WishDirection.Length > 999990 )
-			{
-				var movement = Mover.Velocity.Dot( WishDirection.Normal );
-				Mover.Velocity = Mover.Velocity - movement * WishDirection.Normal;
-				Mover.ApplyFriction( tr.Surface.Friction * 10.0f, Time.Delta );
-				Mover.Velocity += movement * WishDirection.Normal;
-
-			}
-			else
-			{
-				Mover.ApplyFriction( tr.Surface.Friction * 10.0f, Time.Delta );
-			}
-		}
-		else
-		{
-			GroundEntity = null;
-			Mover.Velocity += Vector3.Down * 800 * Time.Delta;
-		}
-
-		Velocity = Mover.Velocity;
 		Position = Mover.Position;
+		Velocity = Mover.Velocity;
 	}
 
 	public virtual float MovementSpeed => 200;
 	public virtual void ProcessNavigationDirection( Vector3 wishDirection )
 	{
 		WishDirection = wishDirection;
-		Velocity = Velocity.AddClamped( WishDirection * Time.Delta * 500, MovementSpeed );
+		Velocity = Velocity.AddClamped( WishDirection * MovementSpeed, MovementSpeed );
 		Rotation = Rotation.Lerp( Rotation, Rotation.LookAt( WishDirection, Vector3.Up ), Time.Delta * 3 );
 	}
 }
