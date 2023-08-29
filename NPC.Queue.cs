@@ -32,6 +32,8 @@ public partial class NPC
 }
 public class NPCTask
 {
+	public delegate void OnEndCallBack();
+	public OnEndCallBack OnTaskEnd;
 	public Entity Sequence;
 	public bool DidFinish = false;
 	public virtual async Task HandleTask( NPC owner )
@@ -41,6 +43,10 @@ public class NPCTask
 	public virtual void OnEnd()
 	{
 		DidFinish = true;
+		if (OnTaskEnd != null)
+		{
+			OnTaskEnd();
+		}
 		if ( Sequence != null )
 		{
 			//Sequence.EndSequence();
@@ -52,10 +58,11 @@ public class MoveToTask : NPCTask
 
 	Vector3 Position;
 	bool Running;
-	public MoveToTask( Vector3 pos, bool run = false )
+	public MoveToTask( Vector3 pos, bool run = false, OnEndCallBack end = null )
 	{
 		Position = pos;
 		Running = run;
+		OnTaskEnd = end;
 	}
 	public override async Task HandleTask( NPC owner )
 	{
@@ -72,9 +79,10 @@ public class MoveToTask : NPCTask
 public class RotateToTask : NPCTask
 {
 	Rotation Rotation;
-	public RotateToTask( Rotation rot )
+	public RotateToTask( Rotation rot, OnEndCallBack end = null )
 	{
 		Rotation = rot;
+		OnTaskEnd = end;
 	}
 	public override async Task HandleTask( NPC owner )
 	{
@@ -86,9 +94,10 @@ public class RotateToTask : NPCTask
 public class PlayAnimTask : NPCTask
 {
 	string Animation;
-	public PlayAnimTask( string anim )
+	public PlayAnimTask( string anim, OnEndCallBack end = null )
 	{
 		Animation = anim;
+		OnTaskEnd = end;
 	}
 	public override async Task HandleTask( NPC owner )
 	{
