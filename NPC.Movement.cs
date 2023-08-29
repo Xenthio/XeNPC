@@ -36,7 +36,7 @@ public partial class NPC : AnimatedEntity
 		StepMove(); 
 		CategorizePosition();
 
-		bool Debug = true;
+		bool Debug = false;
 		if ( Debug )
 		{
 			DebugOverlay.Box( Position + TraceOffset, CollisionBounds.Mins, CollisionBounds.Maxs, Color.Red );
