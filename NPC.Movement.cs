@@ -253,7 +253,8 @@ public partial class NPC : AnimatedEntity
 	public virtual float MovementSpeed => 200;
 	public virtual void ProcessNavigationDirection( Vector3 wishDirection )
 	{
-		WishVelocity = wishDirection * (WishSpeed * wishDirection.Length); 
-		Rotation = Rotation.Lerp( Rotation, Rotation.LookAt( WishVelocity, Vector3.Up ), Time.Delta * 3 );
+		WishVelocity = wishDirection * (WishSpeed * wishDirection.Length);
+		TargetRotation = Rotation.LookAt( WishVelocity, Vector3.Up );
+		//Rotation = Rotation.Lerp( Rotation, Rotation.LookAt( WishVelocity, Vector3.Up ), Time.Delta * 3 );
 	}
 }

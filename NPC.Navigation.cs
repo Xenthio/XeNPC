@@ -29,7 +29,7 @@ public partial class NPC : AnimatedEntity
 			{
 				Navigation.DebugDrawPath();
 			} 
-			Rotation = Rotation.Lerp( Rotation, TargetRotation, Time.Delta * 2 );
+			Rotation = Rotation.Lerp( Rotation, TargetRotation, Time.Delta * 4 );
 		}
 	}
 }
