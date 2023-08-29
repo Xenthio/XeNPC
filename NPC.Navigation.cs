@@ -28,7 +28,8 @@ public partial class NPC : AnimatedEntity
 			if ( nav_drawpath )
 			{
 				Navigation.DebugDrawPath();
-			}
+			} 
+			Rotation = Rotation.Lerp( Rotation, TargetRotation, Time.Delta * 2 );
 		}
 	}
 }
