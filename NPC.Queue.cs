@@ -86,7 +86,11 @@ public class RotateToTask : NPCTask
 	}
 	public override async Task HandleTask( NPC owner )
 	{
-		owner.TargetRotation = Rotation;
+		while ( !owner.Rotation.Forward.AlmostEqual(Rotation.Forward, 0.2f) )
+		{
+			owner.TargetRotation = Rotation;
+			await GameTask.NextPhysicsFrame();
+		}
 		OnEnd();
 		return;
 	}

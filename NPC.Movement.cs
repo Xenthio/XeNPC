@@ -64,8 +64,8 @@ public partial class NPC : AnimatedEntity
 		Mover.Trace = Mover.Trace.Size( bbox ).Ignore( this );
 		Mover.MaxStandableAngle = GroundAngle;
 
+		Mover.TryUnstuck();
 		Mover.TryMoveWithStep( Time.Delta, StepSize * Scale );
-
 		Position = Mover.Position;
 		Velocity = Mover.Velocity;
 	}
