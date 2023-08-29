@@ -6,7 +6,7 @@ namespace XeNPC2;
 public partial class NPC : AnimatedEntity
 {
 	MoveHelper Mover;
-	public Vector3 WishDirection;
+	public Vector3 WishVelocity;
 	public float WishSpeed;
 
 	[Net] public float Acceleration { get; set; } = 10.0f;
@@ -30,13 +30,13 @@ public partial class NPC : AnimatedEntity
 		Velocity -= new Vector3( 0, 0, (Gravity * Scale) * 0.5f ) * Time.Delta;
 
 		if (GroundEntity != null ) Velocity = Velocity.WithZ( 0 );
-		Accelerate( WishDirection, WishSpeed * WishDirection.Length, 0, Acceleration );
+		Accelerate( WishVelocity.Normal, WishVelocity.Length, 0, Acceleration );
 		if (GroundEntity != null ) Velocity = Velocity.WithZ( 0 );
 
 		StepMove(); 
 		CategorizePosition();
 
-		bool Debug = false;
+		bool Debug = true;
 		if ( Debug )
 		{
 			DebugOverlay.Box( Position + TraceOffset, CollisionBounds.Mins, CollisionBounds.Maxs, Color.Red );
@@ -50,10 +50,11 @@ public partial class NPC : AnimatedEntity
 			DebugOverlay.Text( $"    BaseVelocity: {BaseVelocity}", pos + (Vector3.Up * 10));
 			DebugOverlay.Text( $"    GroundEntity: {GroundEntity} [{GroundEntity?.Velocity}]", pos + (Vector3.Up * 15) );
 			DebugOverlay.Text( $" SurfaceFriction: {SurfaceFriction}", pos + (Vector3.Up * 20) );
-			DebugOverlay.Text( $"    WishVelocity: {WishDirection}", pos + (Vector3.Up * 25) );
-			DebugOverlay.Text( $"    Speed: {Velocity.Length}", pos + (Vector3.Up * 30) );
+			DebugOverlay.Text( $"    WishVelocity: {WishVelocity}", pos + (Vector3.Up * 25) );
+			DebugOverlay.Text( $"    WishSpeed: {WishSpeed}", pos + (Vector3.Up * 30) );
+			DebugOverlay.Text( $"    Speed: {Velocity.Length}", pos + (Vector3.Up * 35) );
 		}
-		WishDirection = Vector3.Zero;
+		WishVelocity = Vector3.Zero;
 	}
 
 	public virtual void StepMove()
@@ -252,7 +253,7 @@ public partial class NPC : AnimatedEntity
 	public virtual float MovementSpeed => 200;
 	public virtual void ProcessNavigationDirection( Vector3 wishDirection )
 	{
-		WishDirection = wishDirection; 
-		Rotation = Rotation.Lerp( Rotation, Rotation.LookAt( WishDirection, Vector3.Up ), Time.Delta * 3 );
+		WishVelocity = wishDirection * (WishSpeed * wishDirection.Length); 
+		Rotation = Rotation.Lerp( Rotation, Rotation.LookAt( WishVelocity, Vector3.Up ), Time.Delta * 3 );
 	}
 }
